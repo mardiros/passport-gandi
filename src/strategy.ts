@@ -14,7 +14,7 @@ const defaultAuthorizationURL = "https://id.gandi.net/authorize";
 const defaultTokenURL = "https://id.gandi.net/token";
 
 /** Strategy option to provide. */
-interface StrategyOptions {
+export interface StrategyOptions {
   /** Client ID To Provide.
    *
    * retrieve when registering your application. */
@@ -45,7 +45,7 @@ interface StrategyOptions {
   /** Used to override Gandi OAuth2 /token URL for testing purpose. */
   tokenURL?: string;
   /** Used to override Gandi OAuth2 /tokeninfo URL for testing purpose. */
-  tokenInfoUrl?: string;
+  tokenInfoURL?: string;
 
   // scopeSeparator?: string;
   // sessionKey?: string;
@@ -93,8 +93,7 @@ interface ITokens {
   expiresAt: number;
 }
 
-class Tokens implements ITokens {
-
+export class Tokens implements ITokens {
   /**
    * Create the token object from POJO that implement IToken.
    * @param obj the POJO object
@@ -109,7 +108,7 @@ class Tokens implements ITokens {
    * @param refreshToken OAuth2.0 refresh token
    */
   public static from_profile(
-    profile: ITokenInfo,
+    profile: IProfileInfo,
     accessToken: string,
     refreshToken: string
   ): Tokens {
@@ -224,8 +223,8 @@ const tokenToProfile = (options: StrategyOptions) => {
     let nfo = null;
     try {
       nfo = await client
-        .get<ITokenInfo>(options.tokenInfoUrl || defaultTokenInfoURL)
-        .then((resp: AxiosResponse<ITokenInfo>) => resp.data);
+        .get<IProfileInfo>(options.tokenInfoURL || defaultTokenInfoURL)
+        .then((resp: AxiosResponse<IProfileInfo>) => resp.data);
       // console.log("Token Info: " + JSON.stringify(nfo));
     } catch (error) {
       // console.log(`Error ${error} while fetching tokeninfo`);
@@ -243,8 +242,7 @@ const tokenToProfile = (options: StrategyOptions) => {
 /**
  * Passport Strategy for Gandi OAuth2.0.
  */
-class GandiStrategy extends OAuth2Strategy {
-
+export class GandiStrategy extends OAuth2Strategy {
   /**
    * Parameters to configure a register application at Gandi.
    * @param options configuration to use
@@ -262,9 +260,6 @@ class GandiStrategy extends OAuth2Strategy {
       passReqToCallback: true
     };
     super(oauth2opts, tokenToProfile(options));
-    this.name = "Gandi"
+    this.name = "Gandi";
   }
-  
 }
-
-export { GandiStrategy };
